@@ -19,3 +19,5 @@ ldap_validate
 am_i_root && ensure_user_exists "$LDAP_DAEMON_USER" --group "$LDAP_DAEMON_GROUP"
 # Ensure Open LDAP server is initialize
 ldap_initialize
+# Allow running custom initialization scripts
+ldap_custom_init_scripts

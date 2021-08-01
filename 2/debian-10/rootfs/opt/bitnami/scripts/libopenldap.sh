@@ -439,6 +439,44 @@ ldap_initialize() {
 }
 
 ########################
+# Run custom initialization scripts
+# Globals:
+#   LDAP_*
+# Arguments:
+#   None
+# Returns:
+#   None
+#########################
+ldap_custom_init_scripts() {
+    if [[ -n $(find /docker-entrypoint-initdb.d/ -type f -regex ".*\.\(sh\)") ]] && [[ ! -f "$LDAP_DATA_DIR/.user_scripts_initialized" ]] ; then
+        info "Loading user's custom files from /docker-entrypoint-initdb.d";
+        for f in /docker-entrypoint-initdb.d/*; do
+            debug "Executing $f"
+            case "$f" in
+                *.sh)
+                    if [[ -x "$f" ]]; then
+                        if ! "$f"; then
+                            error "Failed executing $f"
+                            return 1
+                        fi
+                    else
+                        warn "Sourcing $f as it is not executable by the current user, any error may cause initialization to fail"
+                        . "$f"
+                    fi
+                    ;;
+                *)
+                    warn "Skipping $f, supported formats are: .sh"
+                    ;;
+            esac
+        done
+        touch "$LDAP_DATA_DIR"/.user_scripts_initialized
+        # Stop OpenLDAP in case it was started during custom init
+        ldap_stop
+    fi
+}
+
+
+########################
 # OpenLDAP configure TLS
 # Globals:
 #   LDAP_*

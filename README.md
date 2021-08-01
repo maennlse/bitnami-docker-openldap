@@ -181,6 +181,14 @@ The Bitnami Docker OpenLDAP can be easily setup with the following environment v
 - `LDAP_CUSTOM_SCHEMA_FILE`: Location of a custom internal schema file that could not be added as custom ldif file (i.e. containing some `structuralObjectClass`). Default is **/schema/custom.ldif**"
 - `LDAP_ULIMIT_NOFILES`: Maximum number of open file descriptors. Default: **1024**.
 
+## Customize a new OpenLDAP container
+The [Bitnami OpenLDAP](https://github.com/bitnami/bitnami-docker-openldap) image allows you to use your custom scripts to initialize a fresh instance.
+
+The allowed script extension is `.sh`, all scripts are executed in alphabetical order and need to reside in `/docker-entrypoint-initdb.d/`.
+
+Scripts are executed are after the initilization and before the startup of the OpenLDAP service.
+
+
 Check the official [OpenLDAP Configuration Reference](https://www.openldap.org/doc/admin24/guide.html) for more information about how to configure OpenLDAP.
 
 ## Securing OpenLDAP traffic
